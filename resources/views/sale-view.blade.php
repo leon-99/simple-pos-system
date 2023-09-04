@@ -4,7 +4,8 @@
     <div class="container text-center">
         <div class="row">
             <h4 class="text-center my-3">Invoice</h4>
-            {{-- <p class="text-center">{{$time}}</p> --}}
+            <p>by {{$user}}</p>
+            <p class="text-center">{{$time}}</p>
         </div>
         <div class="row justify-content-center">
             <div class="col-md-10">

@@ -6,11 +6,18 @@
     @endif
     <div class="d-flex">
         <div class="col-md-6" style="border-right: solid 1px darkgrey">
-            <table class="table text-center">
+
+            <select wire:click="changeSort" wire:model="sort" id="sort" class="form-select w-50">
+                <option value="name">Sort By Name</option>
+                <option value="quantity_on_hand">Sort By Qty</option>
+                <option value="price">Sort By Price</option>
+            </select>
+            <table class="table text-center mt-3">
                 <thead>
                     <tr>
                         <th scope="col">Name</th>
-                        <th scope="col">Quantity</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Qty</th>
                         <th scope="col">Add</th>
                     </tr>
                 </thead>
@@ -18,6 +25,7 @@
                     @foreach ($products as $product)
                         <tr>
                             <td>{{ $product->name }}</td>
+                            <td>${{ $product->price }}</td>
                             <td>{{ $product->quantity_on_hand }}</td>
                             <td>
                                 <button wire:click="removeItem({{ $product->id }})"
@@ -29,6 +37,9 @@
                     @endforeach
                 </tbody>
             </table>
+            <div class="text-center ms-5">
+                {{$products->links()}}
+            </div>
         </div>
         <div class="col-md-4  ms-5 border-left" style="height: 100vh;">
             <h5 class="text-center">Current Sale</h5>

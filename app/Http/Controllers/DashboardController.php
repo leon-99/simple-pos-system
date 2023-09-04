@@ -31,9 +31,15 @@ class DashboardController extends Controller
     {
         $items = SaleItem::where('sale_id', $sale->id)->get();
 
+        $time = Carbon::now()->toDateTimeString();
+
+        $user = auth()->user()->name;
+
         return view('sale-view', [
             'items' => $items,
-            'total' => $sale->total_amount
+            'total' => $sale->total_amount,
+            'time' => $time,
+            'user' => $user
         ]);
     }
 }

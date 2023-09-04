@@ -4,8 +4,6 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use App\Models\Product;
-use App\Models\SaleItem;
-use App\Models\Sale;
 use App\Models\CurrentSale;
 
 use Livewire\WithPagination;
@@ -13,7 +11,18 @@ use Livewire\WithPagination;
 
 class SalePage extends Component
 {
+    protected $paginationTheme = 'bootstrap';
+
     use WithPagination;
+
+    public $sort = 'quantity_on_hand';
+
+
+
+    public function changeSort()
+    {
+        $this->render();
+    }
 
     public function addItem($id)
     {
@@ -64,12 +73,21 @@ class SalePage extends Component
 
     public function clear()
     {
+
+        $currentSales = CurrentSale::all();
+
+        foreach($currentSales as $i) {
+            $item = Product::where('id', $i->product_id)->first();
+            $item->quantity_on_hand = $item->quantity_on_hand + $i->quantity;
+            $item->save();
+        }
+
         CurrentSale::truncate();
     }
 
     public function render()
     {
-        $products = Product::all();
+        $products = Product::orderByDesc($this->sort)->paginate(10);
         $CurrentProducts = CurrentSale::all();
         $total = 0;
         foreach ($CurrentProducts as $i) {

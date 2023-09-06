@@ -17,7 +17,7 @@ class DashboardController extends Controller
         $today = Sale::getTodayTotal();
         $monthly = Sale::getMonthlyTotal();
         $yearly = Sale::getYearlyTotal();
-        $sales = Sale::where('user_id', auth()->id())->latest()->get();
+        $sales = Sale::with('user')->where('user_id', auth()->id())->latest()->get();
 
         return view('dashboard', [
             'monthly' => $monthly,

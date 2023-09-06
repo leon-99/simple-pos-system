@@ -55,7 +55,7 @@ class SalePage extends Component
     {
         $item = Product::find($id);
 
-        if (CurrentSale::where('name', $item->name)->first()->quantity > 1) {
+        if (CurrentSale::where('product_id', $item->id)->first()->quantity > 1) {
             $currentItem = CurrentSale::where('name', $item->name)->first();
             $currentItem->quantity = $currentItem->quantity -= 1;
             $currentItem->save();
@@ -88,7 +88,7 @@ class SalePage extends Component
     public function render()
     {
         $products = Product::orderByDesc($this->sort)->paginate(10);
-        $CurrentProducts = CurrentSale::all();
+        $CurrentProducts = CurrentSale::with('product')->get();
         $total = 0;
         foreach ($CurrentProducts as $i) {
             $total = +($i->product->price * $i->quantity) + $total;

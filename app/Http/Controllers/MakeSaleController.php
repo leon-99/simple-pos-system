@@ -56,7 +56,7 @@ class MakeSaleController extends Controller
         // remove all items from current sale table
         CurrentSale::truncate();
 
-        $retrunItems = SaleItem::where('sale_id', $sale->id)->get();
+        $retrunItems = SaleItem::with('product')->where('sale_id', $sale->id)->get();
         $time = Carbon::now()->toDateTimeString();
 
         return view('invoice', [

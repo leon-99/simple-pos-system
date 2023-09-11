@@ -35,10 +35,10 @@ class SalePage extends Component
                 'name' => $item->name
             ]);
 
-            $currentSaleItem->quantity = $currentSaleItem->quantity += 1;
+            $currentSaleItem->quantity++;
             $currentSaleItem->save();
 
-            $item->quantity_on_hand = $item->quantity_on_hand - 1;
+            $item->quantity_on_hand--;
             $item->save();
         }
 
@@ -54,13 +54,13 @@ class SalePage extends Component
             $currentItem = CurrentSale::where('name', $item->name)->first();
 
             if (CurrentSale::where('product_id', $item->id)->first()->quantity > 1) {
-                $currentItem->quantity = $currentItem->quantity -= 1;
+                $currentItem->quantity--;
                 $currentItem->save();
             } else {
                 $currentItem->delete();
             }
 
-            $item->quantity_on_hand = $item->quantity_on_hand + 1;
+            $item->quantity_on_hand++;
             $item->save();
         }
     }

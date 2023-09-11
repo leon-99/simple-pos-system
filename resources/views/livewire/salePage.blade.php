@@ -1,7 +1,7 @@
 <div>
     @if (session('failed'))
         <div class="alert alert-warning" role="alert">
-           {{ session('failed')}}
+            {{ session('failed') }}
         </div>
     @endif
     <div class="d-flex">
@@ -38,7 +38,7 @@
                 </tbody>
             </table>
             <div class="text-center ms-5">
-                {{$products->links()}}
+                {{ $products->links() }}
             </div>
         </div>
         <div class="col-md-4  ms-5 border-left" style="height: 100vh;">

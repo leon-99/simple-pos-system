@@ -35,14 +35,8 @@ class SalePage extends Component
                 'name' => $item->name
             ]);
 
-            if ($currentSaleItem->quantity == 0) {
-                $currentSaleItem->quantity = 1;
-            } else {
-                $currentSaleItem->quantity = $currentSaleItem->quantity += 1;
-            }
-
+            $currentSaleItem->quantity = $currentSaleItem->quantity += 1;
             $currentSaleItem->save();
-
 
             $item->quantity_on_hand = $item->quantity_on_hand - 1;
             $item->save();
@@ -54,17 +48,21 @@ class SalePage extends Component
     public function removeItem($id)
     {
         $item = Product::find($id);
+        $exists = CurrentSale::where('name', $item->name)->exists();
 
-        $currentItem = CurrentSale::where('name', $item->name)->first();
+        if ($exists) {
+            $currentItem = CurrentSale::where('name', $item->name)->first();
 
-        if (CurrentSale::where('product_id', $item->id)->first()->quantity > 1) {
-            $currentItem->quantity = $currentItem->quantity -= 1;
-            $currentItem->save();
-        } else {
-            $currentItem->delete();
+            if (CurrentSale::where('product_id', $item->id)->first()->quantity > 1) {
+                $currentItem->quantity = $currentItem->quantity -= 1;
+                $currentItem->save();
+            } else {
+                $currentItem->delete();
+            }
+
+            $item->quantity_on_hand = $item->quantity_on_hand + 1;
+            $item->save();
         }
-        $item->quantity_on_hand = $item->quantity_on_hand + 1;
-        $item->save();
     }
 
     public function clear()

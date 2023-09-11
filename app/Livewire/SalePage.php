@@ -29,23 +29,23 @@ class SalePage extends Component
         $item = Product::find($id);
 
         if ($item->quantity_on_hand > 0) {
-            if (CurrentSale::where('name', $item->name)->count() > 0) {
-                $currentItem = CurrentSale::where('name', $item->name)->first();
-                $currentItem->quantity = $currentItem->quantity += 1;
-                $currentItem->save();
 
-                $item->quantity_on_hand = $item->quantity_on_hand - 1;
-                $item->save();
+            $currentSaleItem = CurrentSale::firstOrNew(['name' => $item->name], [
+                'product_id' => $id,
+                'name' => $item->name
+            ]);
+
+            if ($currentSaleItem->quantity == 0) {
+                $currentSaleItem->quantity = 1;
             } else {
-                CurrentSale::create([
-                    'product_id' => $id,
-                    'name' => $item->name,
-                    'quantity' => 1
-                ]);
-
-                $item->quantity_on_hand = $item->quantity_on_hand - 1;
-                $item->save();
+                $currentSaleItem->quantity = $currentSaleItem->quantity += 1;
             }
+
+            $currentSaleItem->save();
+
+
+            $item->quantity_on_hand = $item->quantity_on_hand - 1;
+            $item->save();
         }
 
 
@@ -55,20 +55,16 @@ class SalePage extends Component
     {
         $item = Product::find($id);
 
+        $currentItem = CurrentSale::where('name', $item->name)->first();
+
         if (CurrentSale::where('product_id', $item->id)->first()->quantity > 1) {
-            $currentItem = CurrentSale::where('name', $item->name)->first();
             $currentItem->quantity = $currentItem->quantity -= 1;
             $currentItem->save();
-
-            $item->quantity_on_hand = $item->quantity_on_hand + 1;
-            $item->save();
         } else {
-            $currentItem = CurrentSale::where('name', $item->name)->first();
             $currentItem->delete();
-
-            $item->quantity_on_hand = $item->quantity_on_hand + 1;
-            $item->save();
         }
+        $item->quantity_on_hand = $item->quantity_on_hand + 1;
+        $item->save();
     }
 
     public function clear()
@@ -76,7 +72,7 @@ class SalePage extends Component
 
         $currentSales = CurrentSale::all();
 
-        foreach($currentSales as $i) {
+        foreach ($currentSales as $i) {
             $item = Product::where('id', $i->product_id)->first();
             $item->quantity_on_hand = $item->quantity_on_hand + $i->quantity;
             $item->save();
